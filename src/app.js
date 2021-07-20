@@ -2,7 +2,8 @@ import express from "express";
 import cors from "cors";
 import jwt from "jsonwebtoken";
 import connection from "./database.js";
-import * as userController from "./controllers/userController.js"
+import * as userController from "./controllers/userController.js";
+import * as financialController from "./controllers/financialController.js";
 
 const app = express();
 app.use(cors());
@@ -10,59 +11,8 @@ app.use(express.json());
 
 app.post("/sign-up", userController.signUp);
 app.post("/sign-in", userController.signIn);
+app.post("/financial-events", financialController.addRegister);
 
-
-app.post("/financial-events", async (req, res) => {
-  try {
-    const authorization = req.headers.authorization || "";
-    const token = authorization.split('Bearer ')[1];
-
-    const { value, type } = req.body;
-
-    if (!token) {
-      return res.sendStatus(401);
-    }
-
-    let user;
-
-    try {
-      user = jwt.verify(token, process.env.JWT_SECRET);
-    } catch {
-      return res.sendStatus(401);
-    }
-
-    if (!value || !type) {
-      return res.sendStatus(400);
-    }
-
-    if (!['INCOME', 'OUTCOME'].includes(type)) {
-      return res.sendStatus(400);
-    }
-
-    if (value < 0) {
-      return res.sendStatus(400);
-    }
-
-    await connection.query(
-      `INSERT INTO "financialEvents" ("userId", "value", "type") VALUES ($1, $2, $3)`,
-      [user.id, value, type]
-    );
-
-    res.sendStatus(201);
-  } catch (err) {
-    console.error(err);
-    res.sendStatus(500);
-  }
-});
-
-async function validUser(){
-  let user;
-  try {
-    return user = jwt.verify(token, process.env.JWT_SECRET);
-  } catch {
-    return null;
-  }
-}
 
 app.get("/financial-events", async (req, res) => {
   try {
