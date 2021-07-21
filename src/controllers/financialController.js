@@ -2,9 +2,6 @@
 import jwt from "jsonwebtoken";
 import * as financialService from "../services/financialService.js"
 
-import * as financialRepository from "../respositories/financialRepository.js"
-import connection from "../database.js";
-
 export async function addRegister (req, res) {
   const { value, type } = req.body;
 

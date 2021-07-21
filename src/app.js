@@ -1,7 +1,5 @@
 import express from "express";
 import cors from "cors";
-import jwt from "jsonwebtoken";
-import connection from "./database.js";
 import * as userController from "./controllers/userController.js";
 import * as financialController from "./controllers/financialController.js";
 
